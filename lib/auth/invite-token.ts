@@ -14,8 +14,17 @@ import { z } from "zod";
 import { interfaceSettingsSchema, type InterfaceSettings } from "@/lib/navigation/interface";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-const SECRET = (): string =>
-  process.env.INVITE_TOKEN_SECRET ?? process.env.INTERNAL_SECRET ?? "dev-fallback";
+const SECRET = (): string => {
+  const secret = process.env.INVITE_TOKEN_SECRET ?? process.env.INTERNAL_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("FATAL: INVITE_TOKEN_SECRET or INTERNAL_SECRET must be configured.");
+    }
+    // Fail-safe for non-production: never use static public 'dev-fallback'
+    return process.env.TEST_INVITE_SECRET ?? "cobraflow-local-secret-do-not-use-in-prod";
+  }
+  return secret;
+};
 
 export interface InvitePayload {
   interface_settings?: InterfaceSettings;
