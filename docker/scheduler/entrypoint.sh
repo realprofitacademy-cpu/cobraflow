@@ -195,6 +195,8 @@ CRONS="
 # catalogo_do_feed (lib/cron/piso-ocioso.ts) faz a batida sair antes de
 # qualquer leitura no banco.
 25 */2 * * *|120|api/v1/cron/catalog-feed-sync
+# COBRAFLOW: SINCRONIZACION BCV (Venezuela). Sincroniza la tasa oficial diaria del BCV a las 18:30.
+30 18 * * *|60|api/v1/cron/bcv-sync
 "
 
 # CRONTAB_PATH é ponto de injeção do teste (tests/shell/scheduler-entrypoint.test.sh).
