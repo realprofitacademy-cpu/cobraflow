@@ -20,6 +20,8 @@
  * adivinhar o formato de envio a partir do cadastro.
  */
 
+import { normalizePhoneNumber } from "./phone-normalization";
+
 /** Só dígitos, sem `+`. */
 function digitsOf(raw: string): string {
   return raw.replace(/\D/g, "");
@@ -27,7 +29,8 @@ function digitsOf(raw: string): string {
 
 /**
  * Formas pelas quais este número pode estar gravado. A primeira é sempre a original;
- * a segunda (quando existe) é a contraparte com/sem o nono dígito.
+ * a segunda (quando existe) é a contraparte com/sem o nono dígito (Brasil) ou
+ * formato internacional E.164 canónico / formato local (Venezuela +58).
  *
  * Devolve E.164 **com `+`**, que é como `contacts.phone_number` guarda.
  */
@@ -36,6 +39,18 @@ export function phoneLookupVariants(raw: string): string[] {
   if (d.length === 0) return [];
 
   const original = `+${d}`;
+
+  // ── Tratamento para Venezuela (+58) ───────────────────────────────────────
+  if (d.startsWith("58") && d.length === 12) {
+    return [original, `+0${d.slice(2)}`];
+  }
+  if (d.startsWith("0") && d.length === 11 && /^0(412|414|424|416|426|212|241|261)/.test(d)) {
+    return [original, `+58${d.slice(1)}`];
+  }
+  if (d.length === 10 && /^(412|414|424|416|426|212|241|261)/.test(d)) {
+    return [original, `+58${d}`, `+0${d}`];
+  }
+
   // Fora do Brasil o nono dígito não existe — variante única, sem inventar regra.
   if (!d.startsWith("55")) return [original];
 
@@ -52,11 +67,6 @@ export function phoneLookupVariants(raw: string): string[] {
   }
 
   // 13 dígitos: 55 + DDD + 9 locais começando em 9 → a variante remove o nono.
-  //
-  // A checagem do que SOBRA é o que torna esta direção tão prudente quanto a outra.
-  // Sem ela, um `9` grudado num número de fixo (5531 9 3234-5678) geraria a variante
-  // 553132345678 — que é o fixo REAL de outra pessoa. Regra generosa na volta desfaz
-  // a cautela da ida, e a fusão de dois contatos não tem retorno.
   if (local.length === 9 && local.startsWith("9") && /^[6-9]/.test(local.slice(1))) {
     return [original, `+55${ddd}${local.slice(1)}`];
   }
@@ -65,16 +75,21 @@ export function phoneLookupVariants(raw: string): string[] {
 }
 
 /**
- * Forma canônica de CRM: celular BR sempre COM o nono dígito.
- *
- * Entre as variantes de busca, a mais longa é a que tem o 9. Fixo e estrangeiro
- * só têm uma variante — devolvem o próprio número.
+ * Forma canônica de CRM: celular BR sempre COM o nono dígito; Venezuela (+58)
+ * sempre em E.164 com código de país (+58412... / +58212...).
  */
-export function canonicalPhoneBR(raw: string): string {
+export function canonicalPhone(raw: string): string {
+  const normVE = normalizePhoneNumber(raw);
+  if (normVE && normVE.startsWith("+58")) {
+    return normVE;
+  }
   const variants = phoneLookupVariants(raw);
   if (variants.length === 0) return raw.trim();
   return variants.reduce((a, b) => (digitsOf(a).length >= digitsOf(b).length ? a : b));
 }
+
+/** Alias retrocompatível com a base DeskcommCRM */
+export const canonicalPhoneBR = canonicalPhone;
 
 /** Exibição: mesma regra da gravação. Vazio continua vazio. */
 export function phoneForDisplay(raw: string | null | undefined): string {

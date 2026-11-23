@@ -37,6 +37,7 @@ import {
 } from "@/lib/escalacao/numero-interno-de-aviso";
 import { consumirRespostaDoSuporteNoWhatsApp } from "@/lib/escalacao/resposta-whatsapp-ao-caso";
 import { logger } from "@/lib/logger";
+import { emitRealtimeInboxEvent } from "@/lib/realtime/broadcast";
 
 import { ARCHIVED_AT, queryTolerantToMissingArchived } from "../archived";
 import { extrairAtribuicaoMeta } from "../atribuicao-de-anuncio-oficial";
@@ -377,6 +378,22 @@ export async function ingestMetaInbound(
     origem: "meta_webhook",
   });
 
+  // CobraFlow Realtime Broadcast: actualiza el Inbox del agente sin carga WAL
+  void emitRealtimeInboxEvent(admin, {
+    organizationId: orgId,
+    conversationId: conversationId as string,
+    event: "message.created",
+    payload: {
+      message_id: messageId,
+      direction: "inbound",
+      type: e.type,
+      text: e.text,
+      preview: previewOf(e),
+      contact_id: contactId as string,
+      from: e.from,
+    },
+  });
+
   return {
     status: "ingested",
     messageId,
@@ -550,6 +567,26 @@ export async function ingestMetaEcho(
       type: e.type,
       external_id: e.externalId,
       from_business_app: true,
+    },
+  });
+
+  // CobraFlow Realtime Broadcast: actualiza el Inbox del agente con el eco del WhatsApp físico
+  // y notifica que el agente humano respondió desde la app oficial, pausando la IA
+  void emitRealtimeInboxEvent(admin, {
+    organizationId: orgId,
+    conversationId: conversationId as string,
+    event: "message.created",
+    payload: {
+      message_id: messageId,
+      direction: "outbound",
+      sent_via: "external_device",
+      from_business_app: true,
+      type: e.type,
+      text: e.text,
+      preview: previewOfEcho(e),
+      contact_id: contactId as string,
+      to: e.to,
+      ai_paused: true,
     },
   });
 

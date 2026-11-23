@@ -251,6 +251,27 @@ export const CHANNEL_CAPABILITIES: Record<ProviderDeMensagem, ChannelCapabilitie
     reportaConversao: false,
     marcaLidasPorMensagem: false,
   },
+  /**
+   * CobraFlow — Instagram Messaging directo a través de Meta Graph API v21.0.
+   * Conexión oficial nativa (puerta directa) sin intermediarios.
+   */
+  meta_instagram: {
+    freeformOutsideWindow: false,
+    requiresTemplates: false,
+    canManageTemplates: false,
+    banRisk: false,
+    minIntervalMs: null,
+    voiceNote: "wav-only",
+    groups: "none",
+    costPerMessage: false,
+    alteraMensagemEnviada: false,
+    podeReagir: true,
+    transmissao: false,
+    phonebook: false,
+    statusUpdates: false,
+    reportaConversao: false,
+    marcaLidasPorMensagem: true,
+  },
 };
 
 /**
@@ -347,6 +368,7 @@ export function notaDeVozDoCanal(provider: string | null, redeSocial: string | n
 export const PROVIDERS_DE_MENSAGEM = [
   "waha",
   "meta_cloud",
+  "meta_instagram",
   "zernio",
   "zernio_social",
   "datafy",

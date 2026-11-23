@@ -85,10 +85,10 @@ export const PORTAS_SOCIAIS: Record<PortaSocialId, PortaSocial> = {
    */
   direta: {
     id: "direta",
-    rotulo: "conexão direta",
-    providerNoBanco: null,
+    rotulo: "conexão direta (Meta Graph API)",
+    providerNoBanco: "meta_instagram",
     exige: ["conta_autorizada", "credencial_da_conta"],
-    implementada: false,
+    implementada: true,
   },
   /**
    * A conexão por parceiro homologado. É a que existe hoje, para todas as redes:

@@ -29,7 +29,12 @@ export type ChannelProvider =
    * telefone: é o `chat_id` que o próprio bot recebe no update. Ver
    * `./adapters/telegram.ts` e a ausência dele em `PROVIDERS_DE_TELEFONE`.
    */
-  | "telegram";
+  | "telegram"
+  /**
+   * CobraFlow — Instagram Messaging directo a través de Meta Graph API v21.0.
+   * Conexión oficial nativa (puerta directa) sin intermediarios.
+   */
+  | "meta_instagram";
 
 /**
  * Os providers que transportam MENSAGEM — o subconjunto sobre o qual a matriz
