@@ -197,6 +197,8 @@ CRONS="
 25 */2 * * *|120|api/v1/cron/catalog-feed-sync
 # COBRAFLOW: SINCRONIZACION BCV (Venezuela). Sincroniza la tasa oficial diaria del BCV a las 18:30.
 30 18 * * *|60|api/v1/cron/bcv-sync
+# COBRAFLOW: RECORDATORIOS DE COBRANZA Y PAGOS (Venezuela). Recordatorios diarios a las 09:30.
+30 9 * * *|90|api/v1/cron/finance-payment-reminders
 "
 
 # CRONTAB_PATH é ponto de injeção do teste (tests/shell/scheduler-entrypoint.test.sh).
