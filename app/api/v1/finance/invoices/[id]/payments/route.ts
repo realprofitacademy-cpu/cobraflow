@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, { params }: RouteParams): Promise<R
     const supabase = await createClient();
 
     const result = await registerPayment(supabase, {
-      organizationId: authz.org.id,
+      organizationId: authz.org.orgId,
       invoiceId: id,
       paymentMethod: body.paymentMethod,
       currency: body.currency,

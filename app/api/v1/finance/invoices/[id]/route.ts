@@ -46,7 +46,7 @@ export async function GET(req: NextRequest, { params }: RouteParams): Promise<Re
         billing_payments ( id, payment_method, currency, amount_cents, amount_ves, exchange_rate_applied, reference_number, status, payment_date )
       `)
       .eq("id", id)
-      .eq("organization_id", authz.org.id)
+      .eq("organization_id", authz.org.orgId)
       .single();
 
     if (error || !invoice) {
@@ -73,7 +73,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams): Promise<
     const body = await req.json().catch(() => ({}));
     const supabase = await createClient();
 
-    await voidInvoice(supabase, authz.org.id, id, body.reason);
+    await voidInvoice(supabase, authz.org.orgId, id, body.reason);
 
     return ok({ message: "Factura anulada con éxito.", id }, { requestId });
   } catch (error: any) {

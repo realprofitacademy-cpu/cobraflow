@@ -78,7 +78,7 @@ export const instagramAdapter: ChannelAdapter = {
   resolveRecipient(input: RecipientInput): string | null {
     if (input.isGroup) return null; // Instagram DMs grupales no soportados en v1
     // Destinatario es el IGSID (Instagram Scoped ID)
-    return input.providerConversationId ?? (input.phone ? input.phone.replace(/\D/g, "") : null);
+    return input.phoneNumber ? input.phoneNumber.replace(/\D/g, "") : null;
   },
 
   isConfigured(): boolean {
@@ -89,22 +89,21 @@ export const instagramAdapter: ChannelAdapter = {
     const admin = createAdminClient();
     const creds = await resolveInstagramCreds(admin, {
       organizationId: envelope.organizationId,
-      sessionRef: envelope.sessionRef,
     });
 
     if (!creds) {
-      throw new FalhaDeEnvioDoCanal({
-        mensagem: "Credenciales de Instagram no configuradas para esta organización.",
-        categoria: "credencial_invalida",
-      });
+      throw new FalhaDeEnvioDoCanal(
+        "Credenciales de Instagram no configuradas para esta organización.",
+        "permanente",
+      );
     }
 
-    const recipientId = envelope.providerConversationId || envelope.to;
+    const recipientId = envelope.to;
     if (!recipientId) {
-      throw new FalhaDeEnvioDoCanal({
-        mensagem: "Destinatario no válido para Instagram Direct (falta IGSID).",
-        categoria: "destinatario_invalido",
-      });
+      throw new FalhaDeEnvioDoCanal(
+        "Destinatario no válido para Instagram Direct (falta IGSID).",
+        "permanente",
+      );
     }
 
     const url = `https://graph.facebook.com/${creds.graphVersion}/${creds.pageId}/messages`;
@@ -113,10 +112,10 @@ export const instagramAdapter: ChannelAdapter = {
 
     if (envelope.kind === "text") {
       if (!envelope.body?.trim()) {
-        throw new FalhaDeEnvioDoCanal({
-          mensagem: "Mensaje de Instagram sin cuerpo de texto.",
-          categoria: "corpo_invalido",
-        });
+        throw new FalhaDeEnvioDoCanal(
+          "Mensaje de Instagram sin cuerpo de texto.",
+          "permanente",
+        );
       }
       payloadMessage = { text: envelope.body };
     } else if (envelope.media) {
@@ -156,36 +155,22 @@ export const instagramAdapter: ChannelAdapter = {
 
     if (!res.ok || json.error) {
       const err = json.error;
-      throw new FalhaDeEnvioDoCanal({
-        mensagem: err?.message || `Error en Graph API HTTP ${res.status}`,
-        codigo: err?.code ? String(err.code) : String(res.status),
-        categoria: err?.code === 190 ? "credencial_invalida" : "rejeicao_da_plataforma",
-      });
+      const isTransient = res.status >= 500 || res.status === 429;
+      throw new FalhaDeEnvioDoCanal(
+        err?.message || `Error en Graph API HTTP ${res.status}`,
+        isTransient ? "transitoria" : "permanente",
+        res.status,
+      );
     }
 
     const externalId = json.message_id || json.id || null;
     return { externalId };
   },
 
-  async markRead(scope: ChannelTenantScope, messageExternalId: string): Promise<void> {
-    const admin = createAdminClient();
-    const creds = await resolveInstagramCreds(admin, scope);
-    if (!creds) return;
-
-    const url = `https://graph.facebook.com/${creds.graphVersion}/${creds.pageId}/messages`;
-    await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${creds.token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        recipient: { id: scope.sessionRef },
-        sender_action: "mark_seen",
-      }),
-    }).catch(() => {
-      // Marcado de lectura es fail-safe
-    });
+  codes: {
+    notConfigured: "meta_instagram_not_configured",
+    sendFailed: "meta_instagram_error",
+    unknownError: "meta_instagram_unknown",
   },
 
   async checkHealth(input: { organizationId: string; sessionRef: string }): Promise<ChannelHealth> {

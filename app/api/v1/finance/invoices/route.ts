@@ -45,7 +45,7 @@ export async function GET(req: NextRequest): Promise<Response> {
         contacts ( id, name, phone ),
         billing_items ( id, description, quantity, unit_price_cents, total_cents )
       `, { count: "exact" })
-      .eq("organization_id", authz.org.id)
+      .eq("organization_id", authz.org.orgId)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     const supabase = await createClient();
 
     const invoice = await createInvoice(supabase, {
-      organizationId: authz.org.id,
+      organizationId: authz.org.orgId,
       contactId: body.contactId,
       leadId: body.leadId,
       invoiceNumber: body.invoiceNumber,

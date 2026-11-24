@@ -78,10 +78,7 @@ export async function dispatchCohortAdmissionCampaign(
   const bcvRate = bcvRecord?.usdToVes || 65.0;
   const tuitionPriceCents = Number(course.default_price_cents || 0);
   const amountUsd = `$${(tuitionPriceCents / 100).toFixed(2)}`;
-  const amountVes = `${convertUsdCentsToVes(tuitionPriceCents, bcvRate).toLocaleString("es-VE", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })} Bs`;
+  const amountVes = convertUsdCentsToVes(tuitionPriceCents, bcvRate).formattedVes;
 
   // 3. Buscar destinatários
   let contactsQuery = db

@@ -28,7 +28,7 @@ export async function GET(req: NextRequest, { params }: RouteParams): Promise<Re
 
     const report = await getCohortFinancialReport(
       supabase,
-      authz.org.id,
+      authz.org.orgId,
       cohortId,
       customBcvRate,
     );

@@ -42,6 +42,7 @@ const FONTE: Record<ProviderDeMensagem, FonteDeTemplates | null> = {
   // ali ofereceria solução para um problema que este canal não tem.
   waha: null,
   meta_cloud: "oficial",
+  meta_instagram: null,
   zernio: "parceiro",
   zernio_social: null,
   // Parceiro Graph-compatível: os modelos são os da Cloud API, servidos por uma

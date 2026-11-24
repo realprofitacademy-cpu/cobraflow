@@ -28,7 +28,7 @@ export async function GET(req: NextRequest, { params }: RouteParams): Promise<Re
 
     const report = await getCourseFinancialReport(
       supabase,
-      authz.org.id,
+      authz.org.orgId,
       courseId,
       customBcvRate,
     );

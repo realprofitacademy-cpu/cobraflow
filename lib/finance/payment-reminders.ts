@@ -50,9 +50,9 @@ export async function processPaymentReminders(
 
   // 2. Definir rango de fechas para el vencimiento (hoy hasta hoy + daysThreshold)
   const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+  const todayStr = today.toISOString().split("T")[0] ?? "";
   const targetDate = new Date(today.getTime() + daysThreshold * 24 * 60 * 60 * 1000);
-  const targetDateStr = targetDate.toISOString().split("T")[0];
+  const targetDateStr = targetDate.toISOString().split("T")[0] ?? "";
 
   // 3. Buscar facturas con saldo pendiente próximas a vencer o ya vencidas
   let query = db

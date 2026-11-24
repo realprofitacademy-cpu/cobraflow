@@ -29,7 +29,7 @@ export async function POST(
     const supabase = await createClient();
     const result = await dispatchCohortAdmissionCampaign(supabase, {
       cohortId,
-      organizationId: authz.orgId,
+      organizationId: authz.org.orgId,
       targetContactIds: body.target_contact_ids,
       dryRun: body.dry_run ?? true,
     });
