@@ -160,6 +160,25 @@ export function sobeAoMenuLateral(
  * fechada e por isso não vira `minRole`.
  */
 export const NAV_CATALOG = [
+  // CobraFlow extensions
+  {
+    href: "/app/financeiro",
+    label: "Financeiro",
+    description: "Dashboard de faturamento multimoneda e cobranças com taxa BCV da CobraFlow.",
+    icon: "ChartBar",
+    group: "analise",
+    section: "Dinheiro",
+    minRole: "viewer",
+  },
+  {
+    href: "/app/educacao",
+    label: "Educação",
+    description: "Gerenciamento de cursos, cohortes e matrículas para academias.",
+    icon: "BookOpen",
+    group: "analise",
+    section: "Dinheiro",
+    minRole: "viewer",
+  },
   { href: "/app/settings/organizacoes", label: "Organizações clientes", description: "Crie e administre os clientes da sua agência.", icon: "Buildings", group: "organizacao", section: "Empresa", minRole: "admin", agenciaOnly: true },
   {
     // SEM `sidebar: true`, e a razão não tem nada a ver com a qualidade desta
