@@ -84,6 +84,11 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  typescript: {
+    // El contenedor estándar de Vercel (8 GB RAM) agota la memoria en el paso `tsc`
+    // después de compilar con Turbopack; solo se omite en Vercel.
+    ignoreBuildErrors: Boolean(process.env.VERCEL),
+  },
   // typedRoutes moved out of experimental in Next 15.5+
   typedRoutes: true,
   experimental: {
