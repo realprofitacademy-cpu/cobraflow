@@ -63,6 +63,7 @@ import {
   crmGetStudentEnrollments,
   crmGetBcvRate,
   crmEnrollStudent,
+  crmGetCohortReport,
 } from "./educacao";
 import { crmGetHonorariosContrato, crmListHonorariosParcelas } from "./honorarios";
 import { crmDescribeExternalData, crmQueryExternalData } from "./dados-externos";
@@ -158,6 +159,7 @@ export const allTools: ReadonlyArray<McpToolDefinition> = [
   crmListCourses,
   crmGetStudentEnrollments,
   crmGetBcvRate,
+  crmGetCohortReport,
   crmGetHonorariosContrato,
   crmListHonorariosParcelas,
   crmPrepararProposta,

@@ -47,4 +47,14 @@ export const TOOLS_EDUCACAO = declararTools([
     risco: "atencao",
     pacotes: ["escalar"],
   },
+  {
+    name: "crm_get_cohort_report",
+    category: "read",
+    rotulo: "Ver relatório financeiro e alunos da turma",
+    explicacao:
+      "Apresenta quantidade de alunos matriculados, receita total esperada e valores já recebidos em dólares e bolívares.",
+    oQueToca: "Relatórios de turma",
+    risco: "seguro",
+    pacotes: ["escalar"],
+  },
 ]);

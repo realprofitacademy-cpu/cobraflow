@@ -11,6 +11,7 @@ import { z } from "zod";
 import type { McpToolDefinition } from "../types";
 import { getLatestBcvRate, convertUsdCentsToVes } from "@/lib/finance/bcv-service";
 import { createInvoice } from "@/lib/finance/billing-service";
+import { getCohortFinancialReport } from "@/lib/finance/cohort-reports";
 
 // ---------------------------------------------------------------------------
 // 1. crm_list_courses
@@ -397,3 +398,30 @@ export const crmEnrollStudent: McpToolDefinition<typeof enrollStudentInputShape>
     };
   },
 };
+
+// ---------------------------------------------------------------------------
+// 5. crm_get_cohort_report
+// ---------------------------------------------------------------------------
+const getCohortReportInputShape = {
+  cohort_id: z.string().describe("ID da turma/cohorte para gerar o relatório"),
+};
+
+export const crmGetCohortReport: McpToolDefinition<typeof getCohortReportInputShape> = {
+  name: "crm_get_cohort_report",
+  description:
+    "Gera o relatório financeiro e acadêmico da turma/cohorte, informando quantidade de alunos confirmados, " +
+    "taxa de cobrança, receita projetada e valores em dólares e bolívares (BCV).",
+  inputSchema: getCohortReportInputShape,
+  category: "read",
+  requiresRole: "agent",
+  requiresScope: "mcp:read",
+  handler: async (input, ctx) => {
+    const report = await getCohortFinancialReport(ctx.supabase, ctx.organizationId, input.cohort_id);
+    return {
+      success: true,
+      report,
+      summary: `Turma "${report.cohortName}" (${report.courseName}): ${report.confirmedEnrollments} alunos confirmados (${report.collectionRatePercent}% de arrecadação). Receita arrecadada: ${report.collectedRevenueUsd} (~${report.collectedRevenueVes.toLocaleString("es-VE", { minimumFractionDigits: 2 })} Bs a taxa BCV ${report.exchangeRateUsed}).`,
+    };
+  },
+};
+
