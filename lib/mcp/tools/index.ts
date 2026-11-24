@@ -58,6 +58,12 @@ import {
   crmSaveOrgMemory,
 } from "./evolucao";
 import { crmListContactOrders, crmSearchProducts } from "./comercio";
+import {
+  crmListCourses,
+  crmGetStudentEnrollments,
+  crmGetBcvRate,
+  crmEnrollStudent,
+} from "./educacao";
 import { crmGetHonorariosContrato, crmListHonorariosParcelas } from "./honorarios";
 import { crmDescribeExternalData, crmQueryExternalData } from "./dados-externos";
 import { crmConsultarReceita } from "./receitas-externas";
@@ -149,6 +155,9 @@ export const allTools: ReadonlyArray<McpToolDefinition> = [
   crmSaveOrgMemory,
   crmListContactOrders,
   crmSearchProducts,
+  crmListCourses,
+  crmGetStudentEnrollments,
+  crmGetBcvRate,
   crmGetHonorariosContrato,
   crmListHonorariosParcelas,
   crmPrepararProposta,
@@ -193,6 +202,7 @@ export const allTools: ReadonlyArray<McpToolDefinition> = [
   crmProposeLeadFieldsFromDocument,
   // Diagnóstico da empresa na ficha do contato (decisão D7: grava direto).
   crmSaveLeadDiagnosis,
+  crmEnrollStudent,
   crmSendWhatsappMessage,
   // #4129 — o material cadastrado da empresa, como documento. Serve ao wire
   // (API/MCP); no turno, o envio é da nativa `send_message` com `material_id`.

@@ -21,6 +21,7 @@ import { TOOLS_AMIGO } from "./amigo";
 import { TOOLS_ATENDIMENTO } from "./atendimento";
 import { TOOLS_COMERCIO } from "./comercio";
 import { TOOLS_DADOS_EXTERNOS } from "./dados-externos";
+import { TOOLS_EDUCACAO } from "./educacao";
 import { TOOLS_EVOLUCAO } from "./evolucao";
 import { TOOLS_ESCALACAO } from "./escalacao";
 import { TOOLS_FUNIL } from "./funil";
@@ -46,6 +47,7 @@ export const TOOL_CATALOG: ReadonlyArray<McpToolCatalogEntry> = [
   ...TOOLS_EVOLUCAO,
   ...TOOLS_AGENTES,
   ...TOOLS_COMERCIO,
+  ...TOOLS_EDUCACAO,
   ...TOOLS_DADOS_EXTERNOS,
   ...TOOLS_RECEITAS_EXTERNAS,
   ...TOOLS_HONORARIOS,
